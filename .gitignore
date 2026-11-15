@@ -429,3 +429,9 @@ FodyWeavers.xsd
 
 # Frontend built by Vite into the API (see web/vite.config.ts)
 src/Rag101.Api/wwwroot/
+
+# Dev container tooling (.devcontainer/): tokensave index written by
+# postcreate.sh, Automata run lock, and the regenerated feature lock file
+.tokensave
+.automata/automata.lock
+.devcontainer/devcontainer-lock.json

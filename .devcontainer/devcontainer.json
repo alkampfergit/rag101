@@ -1,0 +1,88 @@
+// Dev container for the course AUTHOR's tooling (agents, Automata, Spec Kit).
+// It is not part of what students need: the application still expects MongoDB
+// and Elasticsearch to be supplied by whoever runs it (see the constitution).
+// Adapted from the azdo-cli dev container; MongoDB and Elasticsearch come from
+// docker-compose.yml next to this file.
+{
+    "name": "RAG 101 (.NET 10 + Node)",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "devcontainer",
+    "runServices": [
+        "devcontainer",
+        "mongo",
+        "elasticsearch"
+    ],
+    // Must match the bind mount in docker-compose.yml and REPO_DIR in the
+    // do-work cron scripts.
+    "workspaceFolder": "/workspaces/rag101",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "vscjava.vscode-node-debug2",
+                "ms-dotnettools.csdevkit",
+                "ms-dotnettools.csharp",
+                "github.copilot",
+                "planet57.vscode-beads",
+                "anthropic.claude-code",
+                "github.vscode-github-actions",
+                "bradlc.vscode-tailwindcss",
+                "mongodb.mongodb-vscode"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/usr/bin/zsh"
+                    }
+                },
+                "dotnet.defaultSolution": "Rag101.slnx"
+            }
+        }
+    },
+    "remoteUser": "node",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:1": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "upgradePackages": true
+        },
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "version": "10.0"
+        },
+        "ghcr.io/devcontainers/features/azure-cli:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {
+            "version": "latest"
+        }
+    },
+    // 5101: the application (src/Rag101.Api/Properties/launchSettings.json).
+    // The other two expose the compose services to tools on the host.
+    "forwardPorts": [
+        5101,
+        "mongo:27017",
+        "elasticsearch:9200"
+    ],
+    "portsAttributes": {
+        "5101": {
+            "label": "RAG 101",
+            "onAutoForward": "notify"
+        },
+        "mongo:27017": {
+            "label": "MongoDB",
+            "onAutoForward": "silent"
+        },
+        "elasticsearch:9200": {
+            "label": "Elasticsearch",
+            "onAutoForward": "silent"
+        }
+    },
+    "postCreateCommand": "bash .devcontainer/postcreate.sh",
+    "postStartCommand": "bash .devcontainer/start-do-work-cron.sh"
+}
