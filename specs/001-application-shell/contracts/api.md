@@ -86,9 +86,9 @@ Deletes the application's data collections and its search indices. Settings are 
 
 ```json
 {
-  "deleted": ["MongoDB collection documents", "Elasticsearch indices rag101-*"],
+  "deleted": ["MongoDB collection documents", "Elasticsearch index rag101-books"],
   "failed": []
 }
 ```
 
-Response is `200` even when part of the reset failed; `failed` then lists each part with its reason.
+Each deleted collection and index is listed by name. Response is `200` even when part of the reset failed; `failed` then lists each part with its reason. When Elasticsearch is not configured, only the MongoDB collections are deleted.
