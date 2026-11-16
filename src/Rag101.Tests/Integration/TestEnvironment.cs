@@ -24,11 +24,14 @@ public static class TestEnvironment
     {
         var url = new MongoUrlBuilder(MongoDbConnection);
 
-        // Naming a database in a connection string also changes where the
-        // user is looked up, unless the authentication source is stated.
-        if (url.Username is not null && url.AuthenticationSource is null)
+        // Naming a database in a connection string can also change where the
+        // user is looked up. So the database the driver authenticates against
+        // with the original string is stated before the name is replaced.
+        // With mongodb+srv it may come from DNS, which is why the driver is asked.
+        var credential = MongoClientSettings.FromConnectionString(MongoDbConnection).Credential;
+        if (credential is not null)
         {
-            url.AuthenticationSource = url.DatabaseName ?? "admin";
+            url.AuthenticationSource = credential.Source;
         }
         url.DatabaseName = DatabaseName;
 
