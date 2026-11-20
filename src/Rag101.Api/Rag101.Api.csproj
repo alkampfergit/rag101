@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cisharpai" Version="0.4.0" />
+    <PackageReference Include="Cisharpai.Azure" Version="0.4.0" />
+    <PackageReference Include="Cisharpai.OpenAi" Version="0.4.0" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.5.3" />
+    <PackageReference Include="MongoDB.Driver" Version="3.14.0" />
+  </ItemGroup>
+
+  <!--
+    The frontend lives in /web and is built by Vite into wwwroot.
+    This target runs it as part of "dotnet build", so a clean clone needs one command.
+    It is skipped when the frontend sources have not changed since the last build.
+  -->
+  <PropertyGroup>
+    <WebDirectory>$(MSBuildProjectDirectory)/../../web/</WebDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrontendSource Include="$(WebDirectory)src/**" />
+    <FrontendSource Include="$(WebDirectory)index.html;$(WebDirectory)package.json;$(WebDirectory)vite.config.ts" />
+  </ItemGroup>
+
+  <Target Name="BuildFrontend" BeforeTargets="BeforeBuild" Inputs="@(FrontendSource)" Outputs="$(MSBuildProjectDirectory)/wwwroot/index.html">
+    <Exec Command="npm ci" WorkingDirectory="$(WebDirectory)" Condition="!Exists('$(WebDirectory)node_modules')" />
+    <Exec Command="npm run build" WorkingDirectory="$(WebDirectory)" />
+  </Target>
+
+</Project>
